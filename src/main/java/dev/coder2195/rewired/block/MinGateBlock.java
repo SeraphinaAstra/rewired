@@ -15,12 +15,25 @@ public class MinGateBlock extends GateBlock {
 
 	@Override
 	public int calcSignal(Optional<Integer> leftInput, Optional<Integer> centerInput, Optional<Integer> rightInput) {
-		int value = -1;
-		if (leftInput.isPresent()) value = leftInput.get();
-		if (centerInput.isPresent() && value < 0) value = centerInput.get();
-		if (rightInput.isPresent() && value < 0) value = rightInput.get();
+		int minValue = Integer.MAX_VALUE;
+		boolean hasInput = false;
 
-		return Math.max(0, value);
+		if (leftInput.isPresent()) {
+			minValue = Math.min(minValue, leftInput.get());
+			hasInput = true;
+		}
+
+		if (centerInput.isPresent()) {
+			minValue = Math.min(minValue, centerInput.get());
+			hasInput = true;
+		}
+
+		if (rightInput.isPresent()) {
+			minValue = Math.min(minValue, rightInput.get());
+			hasInput = true;
+		}
+
+		return hasInput ? Math.max(0, minValue) : 0;
 	}
 
 	@Override

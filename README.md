@@ -22,6 +22,6 @@ The project plans to add or currently has:
 - Adders
 - More sensor blocks (akin to sculk sensors and daylight sensors)
 
-It is an ambitious project that is still in development. As because this is an content mod, we are NOT porting to older versions, only offering latest version support.
+It is an ambitious project that is still in development. As because this is a content mod, we are NOT porting to older versions, only offering latest version support.
 
-If you are an maintainer interested in maintaining LTS, please let me know, but remember, that is going to be YOUR port and we are not responsible for any issues that arise from it.
+If you are a maintainer interested in maintaining LTS, please let me know, but remember, that is going to be YOUR port and we are not responsible for any issues that arise from it.
