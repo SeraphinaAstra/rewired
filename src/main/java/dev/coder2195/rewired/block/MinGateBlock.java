@@ -19,7 +19,7 @@ public class MinGateBlock extends GateBlock {
 		boolean hasInput = false;
 
 		if (leftInput.isPresent()) {
-			minValue = Math.min(minValue, leftInput.get());
+			minValue = leftInput.get();
 			hasInput = true;
 		}
 
@@ -33,7 +33,7 @@ public class MinGateBlock extends GateBlock {
 			hasInput = true;
 		}
 
-		return hasInput ? Math.max(0, minValue) : 0;
+		return hasInput ? minValue : 0;
 	}
 
 	@Override
