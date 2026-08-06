@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/redstone_dust_dot",
+  "textures": {
+    "dust": "minecraft:block/redstone_dust_dot"
+  }
+}

@@ -4,24 +4,19 @@ import dev.coder2195.rewired.Rewired;
 import dev.coder2195.rewired.block.*;
 import dev.seraphina.rewired.block.DyedLampBlock;
 import dev.seraphina.rewired.block.AnalogLampBlock;
+import dev.seraphina.rewired.block.BluestoneBridgeBlock;
+import dev.seraphina.rewired.block.BluestoneWireBlock;
+import dev.seraphina.rewired.block.BluestoneTorchBlock;
 import net.minecraft.core.Holder;
 import net.minecraft.references.BlockItemId;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-//? fabric {
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-//? } else {
-/*import static dev.coder2195.rewired.Rewired.MOD_ID;
-import net.neoforged.neoforge.registries.DeferredRegister;
-*///? }
 
 import java.util.function.Function;
 
 public interface RewiredBlocks {
-	//? neoforge
-	//DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Rewired.MOD_ID);
-
 	BlockItemId AND_GATE_ID = blockItem("and_gate");
 	BlockItemId OR_GATE_ID = blockItem("or_gate");
 	BlockItemId XOR_GATE_ID = blockItem("xor_gate");
@@ -33,6 +28,9 @@ public interface RewiredBlocks {
 	BlockItemId MAX_GATE_ID = blockItem("max_gate");
 	BlockItemId DYED_LAMP_ID = blockItem("dyed_lamp");
 	BlockItemId ANALOG_LAMP_ID = blockItem("analog_lamp");
+	BlockItemId BLUESTONE_BRIDGE_ID = blockItem("bluestone_bridge");
+	BlockItemId BLUESTONE_WIRE_ID = BlockItemId.create(Rewired.id("bluestone_wire"), Rewired.id("bluestone_dust"));
+	BlockItemId BLUESTONE_TORCH_ID = blockItem("bluestone_torch");
 	static BlockItemId blockItem(String id) {
 		return BlockItemId.create(Rewired.id(id), Rewired.id(id));
 	}
@@ -54,6 +52,17 @@ public interface RewiredBlocks {
 		.sound(net.minecraft.world.level.block.SoundType.GLASS)
 		.lightLevel(AnalogLampBlock::getLuminance)
 		.strength(0.3f));
+	Holder<Block> BLUESTONE_BRIDGE = register(BLUESTONE_BRIDGE_ID, BluestoneBridgeBlock::new, BlockBehaviour.Properties.of()
+		.strength(1.5f));
+	Holder<Block> BLUESTONE_WIRE = register(BLUESTONE_WIRE_ID, BluestoneWireBlock::new, BlockBehaviour.Properties.of()
+		.noCollision()
+		.instabreak()
+		.sound(net.minecraft.world.level.block.SoundType.WOOL));
+	Holder<Block> BLUESTONE_TORCH = register(BLUESTONE_TORCH_ID, BluestoneTorchBlock::new, BlockBehaviour.Properties.of()
+		.noCollision()
+		.instabreak()
+		.lightLevel(state -> state.getValue(BluestoneTorchBlock.LIT) ? 7 : 0)
+		.sound(net.minecraft.world.level.block.SoundType.WOOD));
 
 	Holder<Block>[] GATES = new Holder[]{
 		AND_GATE,
@@ -71,10 +80,7 @@ public interface RewiredBlocks {
 		var blockKey = id.block();
 		properties.setId(blockKey);
 
-		//? fabric
 		return Registry.registerForHolder(BuiltInRegistries.BLOCK, blockKey, block.apply(properties));
-		//? neoforge
-		//return BLOCKS.registerBlock(blockKey.identifier().getPath(), block, () -> properties);
 	}
 
   static void init() {

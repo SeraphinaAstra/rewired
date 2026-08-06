@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=true": { "model": "rewired:block/bluestone_torch" },
+    "lit=false": { "model": "rewired:block/bluestone_torch_off" }
+  }
+}

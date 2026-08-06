@@ -1,0 +1,7 @@
+{
+  "multipart": [
+    {
+      "apply": { "model": "rewired:block/bluestone_wire_placeholder" }
+    }
+  ]
+}

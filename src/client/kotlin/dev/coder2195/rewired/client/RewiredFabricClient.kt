@@ -7,6 +7,7 @@ import net.minecraft.world.item.DyeColor
 import dev.seraphina.rewired.block.AnalogLampBlock
 import dev.seraphina.rewired.block.DyedLampBlock
 import dev.coder2195.rewired.registry.RewiredBlocks
+// imports fixed to match actual package layout (dev.seraphina.rewired.block)
 
 object RewiredFabricClient : ClientModInitializer {
 	private val DYE_RGB: Map<DyeColor, Int> = mapOf(

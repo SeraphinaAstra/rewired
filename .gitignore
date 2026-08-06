@@ -41,12 +41,10 @@ replay_*.log
 *.jfr
 .env
 
-
-
-
-
 # random
 
 fabric-wiki/
 neoforge-docs/
 stonecutter-wiki/
+decompiled-game/
+/FAST_REDSTONE_ARCHITECTURE.md

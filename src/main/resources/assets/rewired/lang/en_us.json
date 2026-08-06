@@ -10,5 +10,8 @@
 	"block.rewired.max_gate": "Max Gate",
 	"block.rewired.min_gate": "Min Gate",
 	"block.rewired.dyed_lamp": "Dyed Lamp",
-	"block.rewired.analog_lamp": "Analog Lamp"
+	"block.rewired.analog_lamp": "Analog Lamp",
+	"block.rewired.bluestone_bridge": "Bluestone Bridge",
+	"item.rewired.bluestone_dust": "Bluestone Dust",
+	"block.rewired.bluestone_torch": "Bluestone Torch"
 }
