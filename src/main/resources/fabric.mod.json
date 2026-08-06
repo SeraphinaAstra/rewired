@@ -18,6 +18,12 @@
 		"main": [
       "dev.coder2195.rewired.RewiredFabric"
 		],
+		"client": [
+			{
+				"adapter": "kotlin",
+				"value": "dev.coder2195.rewired.client.RewiredFabricClient"
+			}
+		],
 		"fabric-datagen": [
 			"dev.coder2195.rewired.datagen.RewiredDatagen"
 		]
@@ -28,6 +34,7 @@
 	"accessWidener": "rewired.ct",
 	"depends": {
 		"fabricloader": ">=0.17",
-		"minecraft": "${minecraft}"
+		"minecraft": "${minecraft}",
+		"fabric-language-kotlin": ">=1.13.13+kotlin.2.4.10"
 	}
 }

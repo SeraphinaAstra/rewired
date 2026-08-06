@@ -8,5 +8,7 @@
 	"block.rewired.nand_gate": "NAND Gate",
 	"block.rewired.average_gate": "Average Gate",
 	"block.rewired.max_gate": "Max Gate",
-	"block.rewired.min_gate": "Min Gate"
+	"block.rewired.min_gate": "Min Gate",
+	"block.rewired.dyed_lamp": "Dyed Lamp",
+	"block.rewired.analog_lamp": "Analog Lamp"
 }

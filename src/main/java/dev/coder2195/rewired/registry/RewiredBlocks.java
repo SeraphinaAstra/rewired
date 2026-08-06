@@ -2,6 +2,8 @@ package dev.coder2195.rewired.registry;
 
 import dev.coder2195.rewired.Rewired;
 import dev.coder2195.rewired.block.*;
+import dev.seraphina.rewired.block.DyedLampBlock;
+import dev.seraphina.rewired.block.AnalogLampBlock;
 import net.minecraft.core.Holder;
 import net.minecraft.references.BlockItemId;
 import net.minecraft.world.level.block.Block;
@@ -29,6 +31,8 @@ public interface RewiredBlocks {
 	BlockItemId AVERAGE_GATE_ID = blockItem("average_gate");
 	BlockItemId MIN_GATE_ID = blockItem("min_gate");
 	BlockItemId MAX_GATE_ID = blockItem("max_gate");
+	BlockItemId DYED_LAMP_ID = blockItem("dyed_lamp");
+	BlockItemId ANALOG_LAMP_ID = blockItem("analog_lamp");
 	static BlockItemId blockItem(String id) {
 		return BlockItemId.create(Rewired.id(id), Rewired.id(id));
 	}
@@ -42,6 +46,14 @@ public interface RewiredBlocks {
 	Holder<Block> AVERAGE_GATE = register(AVERAGE_GATE_ID, AverageGateBlock::new, BlockBehaviour.Properties.of());
 	Holder<Block> MIN_GATE = register(MIN_GATE_ID, MinGateBlock::new, BlockBehaviour.Properties.of());
 	Holder<Block> MAX_GATE = register(MAX_GATE_ID, MaxGateBlock::new, BlockBehaviour.Properties.of());
+	Holder<Block> DYED_LAMP = register(DYED_LAMP_ID, DyedLampBlock::new, BlockBehaviour.Properties.of()
+		.sound(net.minecraft.world.level.block.SoundType.GLASS)
+		.lightLevel(DyedLampBlock::getLuminance)
+		.strength(0.3f));
+	Holder<Block> ANALOG_LAMP = register(ANALOG_LAMP_ID, AnalogLampBlock::new, BlockBehaviour.Properties.of()
+		.sound(net.minecraft.world.level.block.SoundType.GLASS)
+		.lightLevel(AnalogLampBlock::getLuminance)
+		.strength(0.3f));
 
 	Holder<Block>[] GATES = new Holder[]{
 		AND_GATE,

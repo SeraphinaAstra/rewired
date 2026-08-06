@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "rewired:block/dyed_lamp"
+    },
+    "lit=true": {
+      "model": "rewired:block/dyed_lamp_on"
+    }
+  }
+}

@@ -17,5 +17,7 @@ public class BlockLootProvider extends FabricBlockLootSubProvider {
 		for (var gate : RewiredBlocks.GATES) {
 			dropSelf(gate.value());
 		}
+		dropSelf(RewiredBlocks.DYED_LAMP.value());
+		dropSelf(RewiredBlocks.ANALOG_LAMP.value());
 	}
 }

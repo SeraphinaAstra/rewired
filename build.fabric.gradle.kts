@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
 	id("net.fabricmc.fabric-loom")
 	id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.22"
 	id("me.modmuss50.mod-publish-plugin") version "2.1.1"
+	id("org.jetbrains.kotlin.jvm") version "2.4.10"
 }
 
 // DO NOT set group = ...!
@@ -32,6 +35,7 @@ dependencies {
 	minecraft("com.mojang:minecraft:${sc.current.version}")
 	implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 	implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+	implementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric_kotlin")}")
 }
 
 loom {
@@ -77,11 +81,11 @@ fabricApi {
 	}
 }
 
-fletchingTable {
-	fabric /* or neoforge { } */ {
-		applyMixinConfig = false
+	fletchingTable {
+		fabric {
+			applyMixinConfig = false
+		}
 	}
-}
 
 java {
 	withSourcesJar()
@@ -91,6 +95,12 @@ java {
 	toolchain {
 		vendor = JvmVendorSpec.ADOPTIUM
 		languageVersion = JavaLanguageVersion.of(requiredJava.majorVersion)
+	}
+}
+
+kotlin {
+	compilerOptions {
+		jvmTarget = JvmTarget.JVM_25
 	}
 }
 

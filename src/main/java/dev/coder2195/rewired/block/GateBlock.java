@@ -167,8 +167,10 @@ public abstract class GateBlock extends DiodeBlock implements EntityBlock {
 		}
 
 		if (toToggle == null) return super.useWithoutItem(state, level, pos, player, hitResult);
-		level.setBlock(pos, state.setValue(toToggle, !state.getValue(toToggle)), Block.UPDATE_CLIENTS);
-		this.refreshOutputState(level, pos, state);
+		if (!level.isClientSide()) {
+			level.setBlock(pos, state.setValue(toToggle, !state.getValue(toToggle)), Block.UPDATE_CLIENTS);
+			this.refreshOutputState(level, pos, state);
+		}
 		return InteractionResult.SUCCESS;
 	}
 

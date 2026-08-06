@@ -40,3 +40,13 @@ replay_*.log
 *.hprof
 *.jfr
 .env
+
+
+
+
+
+# random
+
+fabric-wiki/
+neoforge-docs/
+stonecutter-wiki/

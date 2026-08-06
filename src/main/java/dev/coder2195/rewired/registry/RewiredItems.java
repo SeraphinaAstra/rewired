@@ -34,6 +34,8 @@ public interface RewiredItems {
 	Holder<Item> AVERAGE_GATE = registerBlock(RewiredBlocks.AVERAGE_GATE_ID, RewiredBlocks.AVERAGE_GATE);
 	Holder<Item> MIN_GATE = registerBlock(RewiredBlocks.MIN_GATE_ID, RewiredBlocks.MIN_GATE);
 	Holder<Item> MAX_GATE = registerBlock(RewiredBlocks.MAX_GATE_ID, RewiredBlocks.MAX_GATE);
+	Holder<Item> DYED_LAMP = registerBlock(RewiredBlocks.DYED_LAMP_ID, RewiredBlocks.DYED_LAMP);
+	Holder<Item> ANALOG_LAMP = registerBlock(RewiredBlocks.ANALOG_LAMP_ID, RewiredBlocks.ANALOG_LAMP);
 
 	Holder<Item>[] GATES = new Holder[]{
 		AND_GATE,

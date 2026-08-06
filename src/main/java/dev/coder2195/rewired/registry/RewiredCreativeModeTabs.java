@@ -13,7 +13,6 @@ import net.minecraft.core.Registry;
 /*import net.neoforged.neoforge.registries.DeferredRegister;
 *///? }
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public interface RewiredCreativeModeTabs {
@@ -24,6 +23,8 @@ public interface RewiredCreativeModeTabs {
 		for (var item: RewiredItems.GATES) {
 			output.accept(item.value());
 		}
+		output.accept(RewiredItems.DYED_LAMP.value());
+		output.accept(RewiredItems.ANALOG_LAMP.value());
 	});
 
 	static Holder<CreativeModeTab> register(String id, Supplier<ItemStack> icon, CreativeModeTab.DisplayItemsGenerator generator) {

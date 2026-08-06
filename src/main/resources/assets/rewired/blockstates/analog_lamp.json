@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "rewired:block/analog_lamp"
+    },
+    "lit=true": {
+      "model": "rewired:block/analog_lamp_on"
+    }
+  }
+}
