@@ -6,6 +6,7 @@ import net.minecraft.client.color.block.BlockTintSource
 import net.minecraft.world.item.DyeColor
 import dev.seraphina.rewired.block.AnalogLampBlock
 import dev.seraphina.rewired.block.DyedLampBlock
+import dev.seraphina.rewired.block.BluestoneWireBlock
 import dev.coder2195.rewired.registry.RewiredBlocks
 // imports fixed to match actual package layout (dev.seraphina.rewired.block)
 
@@ -55,8 +56,17 @@ object RewiredFabricClient : ClientModInitializer {
 		return (0xFF shl 24) or ((r * 255).toInt() shl 16) or ((g * 255).toInt() shl 8) or (b * 255).toInt()
 	}
 
+	// Bluestone dust tint: reuses the wire block's own power->color table
+	// (a cyan/blue gradient rather than vanilla's red, so it's visually
+	// distinct from vanilla redstone at a glance) so power level is
+	// actually visible instead of the dust staying flat white.
+	private val BLUESTONE_WIRE_TINT = BlockTintSource { state ->
+		BluestoneWireBlock.getColorForPower(state.getValue(BluestoneWireBlock.POWER))
+	}
+
 	override fun onInitializeClient() {
 		BlockColorRegistry.register(listOf(DYED_LAMP_TINT), RewiredBlocks.DYED_LAMP.value())
 		BlockColorRegistry.register(listOf(ANALOG_LAMP_TINT), RewiredBlocks.ANALOG_LAMP.value())
+		BlockColorRegistry.register(listOf(BLUESTONE_WIRE_TINT), RewiredBlocks.BLUESTONE_WIRE.value())
 	}
 }

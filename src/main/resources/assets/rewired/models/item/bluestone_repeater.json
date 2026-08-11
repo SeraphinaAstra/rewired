@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/repeater",
+  "textures": {
+    "torch": "rewired:block/bluestone_torch",
+    "base": "rewired:block/bluestone_repeater"
+  }
+}

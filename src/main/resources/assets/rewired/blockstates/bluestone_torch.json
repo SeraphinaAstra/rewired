@@ -1,6 +1,16 @@
 {
   "variants": {
-    "lit=true": { "model": "rewired:block/bluestone_torch" },
-    "lit=false": { "model": "rewired:block/bluestone_torch_off" }
+    "lit=true,facing=up": { "model": "rewired:block/bluestone_torch_floor" },
+    "lit=true,facing=down": { "model": "rewired:block/bluestone_torch_floor" },
+    "lit=true,facing=north": { "model": "rewired:block/bluestone_torch_wall_north" },
+    "lit=true,facing=south": { "model": "rewired:block/bluestone_torch_wall_south" },
+    "lit=true,facing=east": { "model": "rewired:block/bluestone_torch_wall_east" },
+    "lit=true,facing=west": { "model": "rewired:block/bluestone_torch_wall_west" },
+    "lit=false,facing=up": { "model": "rewired:block/bluestone_torch_floor_off" },
+    "lit=false,facing=down": { "model": "rewired:block/bluestone_torch_floor_off" },
+    "lit=false,facing=north": { "model": "rewired:block/bluestone_torch_wall_north_off" },
+    "lit=false,facing=south": { "model": "rewired:block/bluestone_torch_wall_south_off" },
+    "lit=false,facing=east": { "model": "rewired:block/bluestone_torch_wall_east_off" },
+    "lit=false,facing=west": { "model": "rewired:block/bluestone_torch_wall_west_off" }
   }
 }

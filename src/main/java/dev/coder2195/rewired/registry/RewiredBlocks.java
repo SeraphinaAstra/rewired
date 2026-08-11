@@ -7,6 +7,8 @@ import dev.seraphina.rewired.block.AnalogLampBlock;
 import dev.seraphina.rewired.block.BluestoneBridgeBlock;
 import dev.seraphina.rewired.block.BluestoneWireBlock;
 import dev.seraphina.rewired.block.BluestoneTorchBlock;
+import dev.seraphina.rewired.block.BluestoneRepeaterBlock;
+import dev.seraphina.rewired.block.BluestoneComparatorBlock;
 import net.minecraft.core.Holder;
 import net.minecraft.references.BlockItemId;
 import net.minecraft.world.level.block.Block;
@@ -31,6 +33,8 @@ public interface RewiredBlocks {
 	BlockItemId BLUESTONE_BRIDGE_ID = blockItem("bluestone_bridge");
 	BlockItemId BLUESTONE_WIRE_ID = BlockItemId.create(Rewired.id("bluestone_wire"), Rewired.id("bluestone_dust"));
 	BlockItemId BLUESTONE_TORCH_ID = blockItem("bluestone_torch");
+	BlockItemId BLUESTONE_REPEATER_ID = blockItem("bluestone_repeater");
+	BlockItemId BLUESTONE_COMPARATOR_ID = blockItem("bluestone_comparator");
 	static BlockItemId blockItem(String id) {
 		return BlockItemId.create(Rewired.id(id), Rewired.id(id));
 	}
@@ -62,6 +66,12 @@ public interface RewiredBlocks {
 		.noCollision()
 		.instabreak()
 		.lightLevel(state -> state.getValue(BluestoneTorchBlock.LIT) ? 7 : 0)
+		.sound(net.minecraft.world.level.block.SoundType.WOOD));
+	Holder<Block> BLUESTONE_REPEATER = register(BLUESTONE_REPEATER_ID, BluestoneRepeaterBlock::new, BlockBehaviour.Properties.of()
+		.instabreak()
+		.sound(net.minecraft.world.level.block.SoundType.WOOD));
+	Holder<Block> BLUESTONE_COMPARATOR = register(BLUESTONE_COMPARATOR_ID, BluestoneComparatorBlock::new, BlockBehaviour.Properties.of()
+		.instabreak()
 		.sound(net.minecraft.world.level.block.SoundType.WOOD));
 
 	Holder<Block>[] GATES = new Holder[]{

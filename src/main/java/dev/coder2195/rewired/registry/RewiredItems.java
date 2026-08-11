@@ -29,6 +29,8 @@ public interface RewiredItems {
 	Holder<Item> BLUESTONE_BRIDGE = registerBlock(RewiredBlocks.BLUESTONE_BRIDGE_ID, RewiredBlocks.BLUESTONE_BRIDGE);
 	Holder<Item> BLUESTONE_WIRE = registerBlock(RewiredBlocks.BLUESTONE_WIRE_ID, RewiredBlocks.BLUESTONE_WIRE);
 	Holder<Item> BLUESTONE_TORCH = registerBlock(RewiredBlocks.BLUESTONE_TORCH_ID, RewiredBlocks.BLUESTONE_TORCH);
+	Holder<Item> BLUESTONE_REPEATER = registerBlock(RewiredBlocks.BLUESTONE_REPEATER_ID, RewiredBlocks.BLUESTONE_REPEATER);
+	Holder<Item> BLUESTONE_COMPARATOR = registerBlock(RewiredBlocks.BLUESTONE_COMPARATOR_ID, RewiredBlocks.BLUESTONE_COMPARATOR);
 
 	Holder<Item>[] GATES = new Holder[]{
 		AND_GATE,

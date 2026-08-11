@@ -1,12 +1,12 @@
 {
   "variants": {
     "facing=north,inverted=false": { "model": "rewired:block/bluestone_bridge" },
-    "facing=north,inverted=true":  { "model": "rewired:block/bluestone_bridge" },
+    "facing=north,inverted=true":  { "model": "rewired:block/bluestone_bridge_inverted" },
     "facing=south,inverted=false": { "model": "rewired:block/bluestone_bridge", "y": 180 },
-    "facing=south,inverted=true":  { "model": "rewired:block/bluestone_bridge", "y": 180 },
+    "facing=south,inverted=true":  { "model": "rewired:block/bluestone_bridge_inverted", "y": 180 },
     "facing=west,inverted=false":  { "model": "rewired:block/bluestone_bridge", "y": 270 },
-    "facing=west,inverted=true":   { "model": "rewired:block/bluestone_bridge", "y": 270 },
+    "facing=west,inverted=true":   { "model": "rewired:block/bluestone_bridge_inverted", "y": 270 },
     "facing=east,inverted=false":  { "model": "rewired:block/bluestone_bridge", "y": 90 },
-    "facing=east,inverted=true":   { "model": "rewired:block/bluestone_bridge", "y": 90 }
+    "facing=east,inverted=true":   { "model": "rewired:block/bluestone_bridge_inverted", "y": 90 }
   }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/torch_wall_west_off",
+  "textures": {
+    "torch": "rewired:block/bluestone_torch_off"
+  }
+}

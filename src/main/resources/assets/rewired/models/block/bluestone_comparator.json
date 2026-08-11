@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/comparator",
+  "textures": {
+    "torch": "rewired:block/bluestone_torch",
+    "base": "rewired:block/bluestone_comparator"
+  }
+}

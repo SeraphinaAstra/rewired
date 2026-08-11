@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "rewired:item/bluestone_torch"
+    "model": "minecraft:item/comparator"
   }
 }

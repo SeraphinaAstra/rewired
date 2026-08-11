@@ -1,7 +1,15 @@
 {
   "multipart": [
-    {
-      "apply": { "model": "rewired:block/bluestone_wire_placeholder" }
-    }
+    { "when": { "north": "none", "east": "none", "south": "none", "west": "none" }, "apply": { "model": "rewired:block/bluestone_dust_dot" } },
+
+    { "when": { "north": "side|up" }, "apply": { "model": "rewired:block/bluestone_dust_side0" } },
+    { "when": { "south": "side|up" }, "apply": { "model": "rewired:block/bluestone_dust_side_alt0", "y": 180 } },
+    { "when": { "east": "side|up" }, "apply": { "model": "rewired:block/bluestone_dust_side_alt0", "y": 90 } },
+    { "when": { "west": "side|up" }, "apply": { "model": "rewired:block/bluestone_dust_side0", "y": 270 } },
+
+    { "when": { "north": "up" }, "apply": { "model": "rewired:block/bluestone_dust_up" } },
+    { "when": { "south": "up" }, "apply": { "model": "rewired:block/bluestone_dust_up", "y": 180 } },
+    { "when": { "east": "up" }, "apply": { "model": "rewired:block/bluestone_dust_up", "y": 90 } },
+    { "when": { "west": "up" }, "apply": { "model": "rewired:block/bluestone_dust_up", "y": 270 } }
   ]
 }

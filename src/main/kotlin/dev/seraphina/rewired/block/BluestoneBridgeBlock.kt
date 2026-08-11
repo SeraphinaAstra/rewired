@@ -3,6 +3,9 @@ package dev.seraphina.rewired.block
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.RandomSource
+import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -34,7 +37,7 @@ import dev.seraphina.rewired.fast.PackedPos
  * Bluestone engine hooks: the bridge is a NodeKind.Bridge node in the
  * graph. pushInput() writes the vanilla-side signal into the node's
  * externalInput (read directly by NodeKind.Bridge's step, i.e. it just
- * passes through — see RedstoneGraph.step()). pollOutput() reads back
+ * passes through — see BluestoneGraph.step()). pollOutput() reads back
  * whatever the graph computed for this same node — meaning a Bluestone
  * network can drive a Bridge node's "input" through wire connections
  * feeding into it, not just from pushInput; both paths land on the same
@@ -96,7 +99,7 @@ class BluestoneBridgeBlock(properties: BlockBehaviour.Properties) : HorizontalDi
 
 	override fun getSignal(
 		state: BlockState,
-		level: net.minecraft.world.level.BlockGetter,
+		level: BlockGetter,
 		pos: BlockPos,
 		direction: Direction,
 	): Int {
@@ -106,10 +109,43 @@ class BluestoneBridgeBlock(properties: BlockBehaviour.Properties) : HorizontalDi
 
 	override fun getDirectSignal(
 		state: BlockState,
-		level: net.minecraft.world.level.BlockGetter,
+		level: BlockGetter,
 		pos: BlockPos,
 		direction: Direction,
 	): Int = getSignal(state, level, pos, direction)
+
+	override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, movedByPiston: Boolean) {
+		if (level.isClientSide) return
+		// Create the bridge node in the engine and connect it to any adjacent
+		// Bluestone wires so the graph can drive it (or be driven by it).
+		Bluestone.engine.pushInput(packed(pos), NodeKind.Bridge, 0)
+		connectToBluestoneNeighbors(level, pos)
+		// Re-sync the vanilla-facing output once on placement.
+		if (!level.blockTicks.willTickThisTick(pos, this)) {
+			level.scheduleTick(pos, this, 1)
+		}
+	}
+
+	override fun affectNeighborsAfterRemoval(state: BlockState, level: ServerLevel, pos: BlockPos, movedByPiston: Boolean) {
+		if (movedByPiston) return
+		Bluestone.engine.removeNode(packed(pos))
+	}
+
+	/**
+	 * Reads the vanilla redstone signal from the input face, matching
+	 * vanilla DiodeBlock.getInputSignal: reads getSignal, and if the target
+	 * is redstone wire, also reads the wire's POWER directly.
+	 */
+	private fun readVanillaInput(level: Level, pos: BlockPos, state: BlockState): Int {
+		val inputFace = vanillaInputFace(state)
+		val inputPos = pos.relative(inputFace)
+		val signal = level.getSignal(inputPos, inputFace)
+		if (signal >= 15) return signal
+		val targetState = level.getBlockState(inputPos)
+		return maxOf(signal, if (targetState.`is`(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE)) {
+			targetState.getValue(net.minecraft.world.level.block.RedStoneWireBlock.POWER)
+		} else 0)
+	}
 
 	override fun neighborChanged(
 		state: BlockState,
@@ -121,11 +157,29 @@ class BluestoneBridgeBlock(properties: BlockBehaviour.Properties) : HorizontalDi
 	) {
 		if (level.isClientSide) return
 
-		val inputFace = vanillaInputFace(state)
-		val inputPos = pos.relative(inputFace)
-		val signal = level.getSignal(inputPos, inputFace)
+		pushInput(pos, readVanillaInput(level, pos, state))
+		connectToBluestoneNeighbors(level, pos)
+	}
 
-		pushInput(pos, signal)
+	// Vanilla-visible output re-syncs from the engine once per game tick,
+	// same cadence rule as lamps/pistons per the architecture doc.
+	override fun tick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
+		// Re-push the vanilla input so the engine always has the latest value.
+		pushInput(pos, readVanillaInput(level, pos, state))
+		// Notify neighbors so vanilla redstone picks up any output change.
+		level.updateNeighborsAt(pos, this)
+	}
+
+	/** Connects this bridge to adjacent Bluestone wires (bidirectional pass-through). */
+	private fun connectToBluestoneNeighbors(level: Level, pos: BlockPos) {
+		val self = packed(pos)
+		for (direction in Direction.values()) {
+			val neighborPos = pos.relative(direction)
+			if (level.getBlockState(neighborPos).block is BluestoneWireBlock) {
+				Bluestone.engine.connect(packed(neighborPos), self)
+				Bluestone.engine.connect(self, packed(neighborPos))
+			}
+		}
 	}
 
 	// --- Bluestone engine hooks ---

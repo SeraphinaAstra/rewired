@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/redstone_torch",
+  "parent": "minecraft:block/torch_wall_south",
   "textures": {
     "torch": "rewired:block/bluestone_torch"
   }

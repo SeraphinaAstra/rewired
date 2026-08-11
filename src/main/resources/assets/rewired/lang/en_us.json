@@ -13,5 +13,11 @@
 	"block.rewired.analog_lamp": "Analog Lamp",
 	"block.rewired.bluestone_bridge": "Bluestone Bridge",
 	"item.rewired.bluestone_dust": "Bluestone Dust",
-	"block.rewired.bluestone_torch": "Bluestone Torch"
+	"block.rewired.bluestone_torch": "Bluestone Torch",
+	"block.rewired.bluestone_repeater": "Bluestone Repeater",
+	"block.rewired.bluestone_comparator": "Bluestone Comparator",
+	"gamerule.rewired.piston_push_limit": "Piston Push Limit",
+	"gamerule.rewired.piston_push_limit.description": "Maximum number of blocks a piston can push",
+	"gamerule.rewired.fast_redstone_subticks": "Bluestone Sub-Ticks Per Tick",
+	"gamerule.rewired.fast_redstone_subticks.description": "How many Bluestone sub-ticks run per game tick (higher = faster Bluestone circuits)"
 }

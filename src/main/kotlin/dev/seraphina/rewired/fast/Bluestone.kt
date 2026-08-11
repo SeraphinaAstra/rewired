@@ -1,5 +1,8 @@
 package dev.seraphina.rewired.fast
 
+import dev.seraphina.rewired.RewiredGameRules
+import net.minecraft.server.MinecraftServer
+
 /**
  * The single shared Bluestone engine instance for this game session.
  * Blocks (BluestoneWireBlock, BluestoneTorchBlock, BluestoneBridgeBlock,
@@ -8,13 +11,17 @@ package dev.seraphina.rewired.fast
  * (server starting / stopping events).
  */
 object Bluestone {
-	val engine: FastRedstoneEngine = FastRedstoneEngine()
+	val engine: BluestoneEngine = BluestoneEngine()
 
 	/** Default matches the architecture doc's suggested starting point: 1 sub-tick per game tick (i.e. same rate as vanilla until tuned). */
 	const val DEFAULT_SUBTICKS_PER_TICK = 1
 
-	fun start() {
-		engine.setSubTicksPerTick(DEFAULT_SUBTICKS_PER_TICK)
+	fun start(server: MinecraftServer) {
+		// Live gamerule value wins; fall back to the default if the rule
+		// isn't registered yet (shouldn't happen — it's registered in init()).
+		val rate = server.gameRules.get(RewiredGameRules.FAST_REDSTONE_SUBTICKS)
+			.coerceAtLeast(1)
+		engine.setSubTicksPerTick(rate)
 		engine.start()
 	}
 

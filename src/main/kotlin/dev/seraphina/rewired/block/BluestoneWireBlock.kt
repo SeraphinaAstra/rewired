@@ -35,15 +35,6 @@ import dev.seraphina.rewired.fast.Bluestone
 import dev.seraphina.rewired.fast.NodeKind
 import dev.seraphina.rewired.fast.PackedPos
 
-/**
- * Bluestone counterpart to vanilla's RedStoneWireBlock. Shape building,
- * connectivity math (getConnectionState / getMissingConnections /
- * getConnectingSide), particle spawning, and the color table are copied
- * near-verbatim per the architecture doc — visuals/connectivity stay
- * identical to vanilla. Only power computation is rerouted: instead of
- * DefaultRedstoneWireEvaluator, this pushes into the Bluestone engine and
- * reads POWER back from it once per game tick.
- */
 class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properties) {
 
 	companion object {
@@ -77,6 +68,9 @@ class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properti
 
 	private val shapes: (BlockState) -> VoxelShape
 	private val crossState: BlockState
+
+	/** Set to false while querying neighbor signals to prevent feedback loops (vanilla's shouldSignal). */
+	private var shouldSignal = true
 
 	init {
 		registerDefaultState(
@@ -212,16 +206,28 @@ class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properti
 		}
 	}
 
+	/**
+	 * Vanilla shouldConnectTo: connects to redstone wire, repeaters (front/back),
+	 * comparators (front/back), observers (facing), and any signal source.
+	 * Bluestone also connects to its own torch and bridge blocks.
+	 */
 	private fun shouldConnectTo(blockState: BlockState, direction: Direction? = null): Boolean {
-		if (blockState.block === this) return true
-		if (blockState.`is`(net.minecraft.world.level.block.Blocks.REPEATER)) {
-			val repeaterDirection = blockState.getValue(net.minecraft.world.level.block.RepeaterBlock.FACING)
-			return repeaterDirection == direction || repeaterDirection.opposite == direction
-		}
-		return if (blockState.`is`(net.minecraft.world.level.block.Blocks.OBSERVER)) {
-			direction == blockState.getValue(net.minecraft.world.level.block.ObserverBlock.FACING)
-		} else {
-			blockState.isSignalSource && direction != null
+		val block = blockState.block
+		return when {
+			block === this -> true
+			block is BluestoneTorchBlock -> true
+			block is BluestoneBridgeBlock -> true
+			block is BluestoneRepeaterBlock -> {
+				val repeaterDirection = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+				repeaterDirection == direction || repeaterDirection.opposite == direction
+			}
+			block is BluestoneComparatorBlock -> {
+				val comparatorDirection = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+				comparatorDirection == direction || comparatorDirection.opposite == direction
+			}
+			// Vanilla: connect to any signal source in the given direction.
+			blockState.isSignalSource && direction != null -> true
+			else -> false
 		}
 	}
 
@@ -235,13 +241,54 @@ class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properti
 		!state.getValue(NORTH).isConnected && !state.getValue(SOUTH).isConnected &&
 			!state.getValue(EAST).isConnected && !state.getValue(WEST).isConnected
 
+	/**
+	 * Connects this wire to adjacent Bluestone components with proper
+	 * directionality matching vanilla:
+	 * - Wire <-> wire: bidirectional
+	 * - Torch -> wire: one-way (torch outputs to wire)
+	 * - Bridge <-> wire: bidirectional
+	 * - Repeater: wire connects to repeater's back (input) and front (output)
+	 * - Comparator: wire connects to comparator's back (main input), sides, and front (output)
+	 */
 	private fun connectToNeighborWires(level: Level, pos: BlockPos) {
 		val self = packed(pos)
 		for (direction in Direction.values()) {
 			val neighborPos = pos.relative(direction)
-			if (level.getBlockState(neighborPos).block === this) {
-				Bluestone.engine.connect(packed(neighborPos), self)
-				Bluestone.engine.connect(self, packed(neighborPos))
+			val neighborBlock = level.getBlockState(neighborPos).block
+			when (neighborBlock) {
+				this -> {
+					Bluestone.engine.connect(packed(neighborPos), self)
+					Bluestone.engine.connect(self, packed(neighborPos))
+				}
+				is BluestoneTorchBlock -> {
+					// Torch outputs to wire; wire receives from torch only (one-way to prevent flickering).
+					Bluestone.engine.connect(packed(neighborPos), self)
+				}
+				is BluestoneBridgeBlock -> {
+					Bluestone.engine.connect(packed(neighborPos), self)
+					Bluestone.engine.connect(self, packed(neighborPos))
+				}
+				is BluestoneRepeaterBlock -> {
+					val facing = level.getBlockState(neighborPos).getValue(BlockStateProperties.HORIZONTAL_FACING)
+					val behind = neighborPos.relative(facing)
+					val front = neighborPos.relative(facing.opposite)
+					when (pos) {
+						behind -> Bluestone.engine.connect(packed(neighborPos), self) // repeater input -> wire
+						front -> Bluestone.engine.connect(self, packed(neighborPos)) // wire -> repeater output
+					}
+				}
+				is BluestoneComparatorBlock -> {
+					val facing = level.getBlockState(neighborPos).getValue(BlockStateProperties.HORIZONTAL_FACING)
+					val behind = neighborPos.relative(facing)
+					val front = neighborPos.relative(facing.opposite)
+					val left = neighborPos.relative(facing.clockWise)
+					val right = neighborPos.relative(facing.counterClockWise)
+					when (pos) {
+						behind -> Bluestone.engine.connect(packed(neighborPos), self) // comparator main input
+						front -> Bluestone.engine.connect(self, packed(neighborPos)) // wire -> comparator output
+						left, right -> Bluestone.engine.connect(packed(neighborPos), self) // comparator side input
+					}
+				}
 			}
 		}
 	}
@@ -252,6 +299,9 @@ class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properti
 		connectToNeighborWires(level, pos)
 		for (direction in Direction.Plane.VERTICAL) {
 			level.updateNeighborsAt(pos.relative(direction), this)
+		}
+		if (!level.blockTicks.willTickThisTick(pos, this)) {
+			level.scheduleTick(pos, this, 1)
 		}
 	}
 
@@ -283,19 +333,28 @@ class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properti
 		}
 	}
 
-	// Vanilla-visible POWER syncs from the engine once per game tick.
+	// Always re-schedule ticks to stay in sync, even if power didn't change.
+	// Wires need to tick every game tick to respond to neighbor changes.
 	override fun tick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
 		val power = Bluestone.engine.pollOutput(packed(pos))
 		if (state.getValue(POWER) != power) {
 			level.setBlock(pos, state.setValue(POWER, power), 2)
+			for (direction in Direction.values()) {
+				level.updateNeighborsAt(pos.relative(direction), this)
+			}
 		}
+		// Always re-schedule to stay in sync with the engine
+		level.scheduleTick(pos, this, 1)
 	}
 
-	override fun getDirectSignal(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int =
-		state.getSignal(level, pos, direction)
+	override fun isSignalSource(state: BlockState): Boolean = shouldSignal
 
+	/**
+	 * Vanilla getSignal: returns power only if the wire points in the queried
+	 * direction (or UP). Does NOT power DOWN.
+	 */
 	override fun getSignal(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int {
-		if (direction == Direction.DOWN) return 0
+		if (!shouldSignal || direction == Direction.DOWN) return 0
 		val power = ownSignal(state, level, pos)
 		if (power == 0) return 0
 		return if (direction != Direction.UP &&
@@ -303,9 +362,10 @@ class BluestoneWireBlock(properties: BlockBehaviour.Properties) : Block(properti
 		) 0 else power
 	}
 
-	override fun ownSignal(state: BlockState, level: BlockGetter, pos: BlockPos): Int = state.getValue(POWER)
+	override fun getDirectSignal(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int =
+		if (!shouldSignal) 0 else getSignal(state, level, pos, direction)
 
-	override fun isSignalSource(state: BlockState): Boolean = true
+	override fun ownSignal(state: BlockState, level: BlockGetter, pos: BlockPos): Int = state.getValue(POWER)
 
 	override fun rotate(state: BlockState, rotation: net.minecraft.world.level.block.Rotation): BlockState = when (rotation) {
 		net.minecraft.world.level.block.Rotation.CLOCKWISE_180 -> state

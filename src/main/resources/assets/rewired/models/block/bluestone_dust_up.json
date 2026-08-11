@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/redstone_dust_up",
+  "textures": {
+    "dust": "rewired:block/bluestone_dust_line",
+    "overlay": "rewired:block/bluestone_dust_overlay"
+  }
+}

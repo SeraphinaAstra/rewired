@@ -21,6 +21,8 @@ public interface RewiredCreativeModeTabs {
 		output.accept(RewiredItems.BLUESTONE_BRIDGE.value());
 		output.accept(RewiredItems.BLUESTONE_WIRE.value());
 		output.accept(RewiredItems.BLUESTONE_TORCH.value());
+		output.accept(RewiredItems.BLUESTONE_REPEATER.value());
+		output.accept(RewiredItems.BLUESTONE_COMPARATOR.value());
 	});
 
 	static Holder<CreativeModeTab> register(String id, Supplier<ItemStack> icon, CreativeModeTab.DisplayItemsGenerator generator) {
